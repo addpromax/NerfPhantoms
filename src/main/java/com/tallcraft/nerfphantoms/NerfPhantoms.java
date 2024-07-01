@@ -232,27 +232,25 @@ public final class NerfPhantoms extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (player.hasPermission("nerfphantoms.disablespawn.auto")) {
-            togglePhantomSpawn(player, false);
-            return;
-        }
 
-        if(storage == null) {
-            return;
-        }
-        // Check storage for disabled player setting (async)
         new BukkitRunnable() {
             @Override
             public void run() {
-                // Import phantom disabled state from storage (if enabled)
-                try {
-                    if (storage.getPhantomDisabled(player.getUniqueId())) {
-                        togglePhantomSpawn(player, false);
+                // Disable spawns based on permission
+                boolean disableSpawn = player.hasPermission("nerfphantoms.disablespawn.auto");
+
+                // If storage is enabled, and the player can change
+                // their preferences, overwrite this based on it
+                if (storage != null && player.hasPermission("nerfphantoms.disablespawn.self")) {
+                    try {
+                        disableSpawn = storage.getPhantomDisabled(player.getUniqueId());
+                    } catch (SQLException throwables) {
+                        logger.info("Error while fetching player data from storage");
+                        throwables.printStackTrace();
                     }
-                } catch (SQLException throwables) {
-                    logger.info("Error while fetching player data from storage");
-                    throwables.printStackTrace();
                 }
+
+                if (disableSpawn) togglePhantomSpawn(player, false);
             }
         }.runTaskAsynchronously(this);
     }
