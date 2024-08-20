@@ -112,8 +112,8 @@ public final class NerfPhantoms extends JavaPlugin implements Listener {
                 }
                 Player player = (Player) sender;
                 boolean state = togglePhantomSpawn(player);
-                player.sendMessage((state ? "Disabled" : "Enabled")
-                        + " phantom spawn for " + player.getDisplayName() + ".");
+                player.sendMessage((state ? "已禁用" : "已启用")
+                        + player.getDisplayName() + " 的幻翼生成 " + ".");
                 return true;
             }
             if (!sender.hasPermission("nerfphantoms.disablespawn.others")) {
@@ -122,7 +122,7 @@ public final class NerfPhantoms extends JavaPlugin implements Listener {
             }
             Player victim = Bukkit.getPlayer(args[1]);
             if (victim == null) {
-                sender.sendMessage("Unable to find player!");
+                sender.sendMessage("无法找到玩家!");
                 return true;
             }
             boolean state = togglePhantomSpawn(victim);
